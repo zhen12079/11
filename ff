@@ -1,0 +1,67 @@
+# import os
+# import shutil
+#
+#
+# def process_directory(dir1, dir2):
+#     # 遍历目录1下的所有文件夹
+#     for root, dirs, files in os.walk(dir1):
+#         for directory in dirs:
+#             # 检查每个目录是否包含 'pcd' 文件夹
+#             pcd_dir_path = os.path.join(root, directory)
+#             if 'pcd' in os.listdir(pcd_dir_path):
+#                 # 获取 'pcd' 文件夹的同级目录
+#                 parent_dir = os.path.dirname(pcd_dir_path)
+#                 sibling_dirs = os.listdir(parent_dir)
+#
+#                 has_image = 'image' in sibling_dirs
+#                 has_json = 'json' in sibling_dirs
+#
+#                 if has_image:
+#                     if has_json:
+#                         print(f"目录 '{pcd_dir_path}' 含有 'pcd'、'image' 和 'json' 文件夹")
+#                     else:
+#                         print(f"目录 '{pcd_dir_path}' 含有 'pcd' 文件夹，但其同级目录中不含有 'json' 文件夹")
+#                         # 复制到目录2
+#                         dest_dir = os.path.join(dir2, os.path.basename(parent_dir))
+#                         shutil.copytree(parent_dir, dest_dir)
+#                         print(f"已将 '{parent_dir}' 复制到 '{dest_dir}'")
+#                 else:
+#                     print(f"目录 '{pcd_dir_path}' 含有 'pcd' 文件夹，但其同级目录中不含有 'image' 文件夹")
+#
+#
+# if __name__ == "__main__":
+#     directory1 = '/home/fz/wwwwww'
+#     directory2 = '/home/fz/www'
+#     process_directory(directory1, directory2)
+
+
+import os
+import shutil
+
+def process_directory(directory1, directory2):
+    # 遍历目录1下的所有文件夹
+    for root, dirs, files in os.walk(directory1):
+        if 'pcd' in dirs:
+            pcd_dir = os.path.join(root, 'pcd')
+            image_dir = os.path.join(root, 'image')
+            json_dir = os.path.join(root, 'json')
+
+            if 'image' in dirs:
+                if 'json' in dirs:
+                    print(f"三者均有: {root}")
+                else:
+                    # 复制包含pcd和image的父文件夹到目录2
+                    parent_dir = os.path.basename(root)
+                    destination = os.path.join(directory2, parent_dir)
+                    shutil.copytree(root, destination)
+                    print(f"已处理并复制: {root}")
+            else:
+                print(f"不含有image文件夹: {pcd_dir}")
+
+# # 设置目录1和目录2路径
+# directory1 = '/path/to/directory1'  # 替换为实际的目录1路径
+# directory2 = '/path/to/directory2'  # 替换为实际的目录2路径
+directory1 = '/home/fz/wwwwww'
+directory2 = '/home/fz/www'
+# 调用处理函数
+process_directory(directory1, directory2)
