@@ -1,0 +1,54 @@
+import os
+import shutil
+
+
+def find_all_folders(base_dir, target_name):
+    # 在给定的根目录下递归查找所有包含目标文件夹名称的目录
+    folder_list = []
+    for root, dirs, _ in os.walk(base_dir):
+        if target_name in dirs:
+            full_path = os.path.join(root, target_name)
+            folder_list.append(full_path)
+    return folder_list
+
+
+def check_subfolders(folder_path, subfolders):
+    # 检查指定目录下是否存在所有指定的子目录
+    return all(os.path.isdir(os.path.join(folder_path, subfolder)) for subfolder in subfolders)
+
+
+def copy_json_folder(src, dest):
+    # 复制json文件夹
+    src_json_path = os.path.join(src, 'json')
+    dest_json_path = os.path.join(dest, 'json')
+    if os.path.exists(src_json_path):
+        if os.path.exists(dest_json_path):
+            shutil.rmtree(dest_json_path)  # 如果目的地已存在json文件夹，则先删除
+        shutil.copytree(src_json_path, dest_json_path)
+        print(f"JSON folder copied from {src_json_path} to {dest_json_path}")
+
+
+def main(directory1, directory2):
+    target_folders = find_all_folders(directory1, 'guiying')
+    if not target_folders:
+        print("No 'guiying' folders found in directory 1.")
+        return
+
+    for folder in target_folders:
+        print(f"Processing directory: {folder}")
+        basename = os.path.basename(folder)
+        potential_match = find_all_folders(directory2, basename)
+        for match in potential_match:
+            if check_subfolders(match, ['pcd', 'image', 'json']):
+                copy_json_folder(match, folder)
+                break
+        else:
+            print(f"No matching directory with required subfolders found for {folder} in directory 2.")
+
+
+if __name__ == "__main__":
+    directory1 = '/home/fz/www'
+    directory2 = '/home/fz/wwwwww'
+    main(directory1, directory2)
+
+
